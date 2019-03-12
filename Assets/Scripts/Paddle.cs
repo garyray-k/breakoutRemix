@@ -5,14 +5,17 @@ using UnityEngine;
 public class Paddle : MonoBehaviour {
     // boolean for auto-testing the game
     public bool autoPlay = false;
+    // variable to change paddle speed
     public float paddleSpeed = 0.2f;
 
+    // objects to hold other objects from within the scene
     private Camera mainCamera;
     private Ball ball;
     private Rect cameraRect;
 
     private void Start() {
         ball = FindObjectOfType<Ball>();
+
         // get camera and boundaries of camera
         mainCamera = FindObjectOfType<Camera>();
         var bottomLeft = mainCamera.ScreenToWorldPoint(Vector3.zero);
@@ -25,6 +28,7 @@ public class Paddle : MonoBehaviour {
     }
 
     void Update() {
+        // determine if in autoplay mode or use the keys
         if (autoPlay) {
             AutoPlay();
         } else {
@@ -47,15 +51,17 @@ public class Paddle : MonoBehaviour {
     }
 
     private void OnCollisionExit2D(Collision2D collision) {
+        // detect ball collision for upgrade tracking purposes
         if (collision.gameObject.name.Contains("Ball")) {
             UpgradeManager.TurnCounter--;
         }
     }
 
+    // follow the ball. buggy with an extra ball though and some other things.
     void AutoPlay() {
         Vector3 paddlePos = new Vector3(0.5f, transform.position.y, 0f);
         float ballPosition = ball.transform.position.x;
-        paddlePos.x = Mathf.Clamp(ballPosition, 1f, 15f);
+        paddlePos.x = Mathf.Clamp(ballPosition, -15f, 15f);
         transform.position = paddlePos;
     }
 }
